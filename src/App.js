@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import MicButton from "./MicButton";
 
 function App() {
   const [listening, setListening] = useState(false);
@@ -66,11 +67,9 @@ function App() {
       {/* Left half: mic controls */}
       <div style={styles.leftPane}>
         <h1 style={styles.title}>🎤 Voice Assistant</h1>
-        <button onClick={toggleListening} style={styles.button}>
-          {listening ? "🛑 Stop Listening" : "🎙️ Start Listening"}
-        </button>
+        <MicButton listening={listening} toggleListening={toggleListening} />
         <p style={{ marginTop: "20px" }}>
-          {listening ? "Listening..." : "Click the button to speak"}
+          {listening ? "Listening..." : "Click the mic to speak"}
         </p>
       </div>
 
