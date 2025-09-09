@@ -36,6 +36,8 @@ function App() {
   };
 
   const handleResponse = (text) => {
+    addMessage("Assistant", "…"); // placeholder
+
     let reply = "Sorry, I didn’t catch that.";
     if (text.toLowerCase().includes("hello")) {
       reply = "Hi there! How are you?";
@@ -43,9 +45,23 @@ function App() {
       reply = `The current time is ${new Date().toLocaleTimeString()}`;
     } else if (text.toLowerCase().includes("name")) {
       reply = "My name is Voice Assistant.";
+    } else if (text.toLowerCase().includes("switch") && text.toLowerCase().includes("theme")) {
+      reply = "I have switched the theme for you. Please let me know if there is anything else I can do";
+      setDarkMode(!darkMode);
+    } else if (text.toLowerCase().includes("clear") && text.toLowerCase().includes("chat")) {
+      setConvo([]);
+      return;
+    } else if (text.toLowerCase().includes("increase") && text.toLowerCase().includes("font")) {
+      // increase the font
+    } else if (text.toLowerCase().includes("decrease") && text.toLowerCase().includes("font")) {
+      // decrease the font
     }
-    addMessage("Assistant", reply);
-    speak(reply);
+
+    setTimeout(() => {
+      setConvo((prev) => prev.slice(0, -1)); // remove placeholder
+      addMessage("Assistant", reply);
+      speak(reply);
+    }, 1000);
   };
 
   const speak = (message) => {
@@ -86,6 +102,38 @@ function App() {
           }}
         >
           {darkMode ? "☀️" : "🌙"}
+        </Button>
+      </Tooltip>
+
+      <Tooltip label={"Decrease Font"} position="bottom" withArrow>
+        <Button
+          onClick={() => setDarkMode(!darkMode)}
+          variant="light"
+          color={darkMode ? "yellow" : "blue"}
+          radius="md"
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "70px",
+          }}
+        >
+          {"➖"}
+        </Button>
+      </Tooltip>
+
+      <Tooltip label={"Increase Font"} position="bottom" withArrow>
+        <Button
+          onClick={() => setDarkMode(!darkMode)}
+          variant="light"
+          color={darkMode ? "yellow" : "blue"}
+          radius="md"
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "130px",
+          }}
+        >
+          {"➕"}
         </Button>
       </Tooltip>
 
