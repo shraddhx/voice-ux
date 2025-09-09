@@ -33,7 +33,8 @@ function App() {
   }
 
   const addMessage = (speaker, text) => {
-    setConvo((prev) => [...prev, { speaker, text }]);
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setConvo((prev) => [...prev, { speaker, text, time }]);
   };
 
   const handleResponse = (text) => {
@@ -163,7 +164,6 @@ function App() {
           backgroundColor: darkMode ? "#1e1e1e" : "#f0f4ff",
         }}
       >
-        <h1 style={styles.title}>🎤 Voice Assistant</h1>
         <MicButton listening={listening} toggleListening={toggleListening} />
       </div>
 
@@ -175,7 +175,10 @@ function App() {
           borderLeft: darkMode ? "2px solid #333" : "2px solid #ccc",
         }}
       >
-        <h2 style={styles.subtitle}>📝 Transcript</h2>
+        <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          <h1 style={styles.subtitle}>📝 Transcript</h1>
+        </div>
+
         <div
           style={{
             ...styles.log,
@@ -189,6 +192,7 @@ function App() {
                 key={i}
                 shadow="xs"
                 p="sm"
+                pb="lg"
                 style={{
                   maxWidth: "70%",
                   alignSelf: msg.speaker === "User" ? "flex-end" : "flex-start",
@@ -206,9 +210,22 @@ function App() {
                   borderTopLeftRadius: msg.speaker === "User" ? "18px" : "0px",
                   wordWrap: "break-word",
                   marginBottom: "8px",
+                  position: "relative",
                 }}
               >
                 <Text size={font}>{msg.text}</Text>
+                <Text
+                  size="xs"
+                  style={{ 
+                    color: darkMode ? "#bcbfbb" : "gray", 
+                    position: "absolute",
+                    bottom: "4px",
+                    right: msg.speaker === "User" ? "12px" : undefined,
+                    left: msg.speaker === "Assistant" ? "12px" : undefined,
+                  }}
+                >
+                  {msg.time}
+                </Text>
               </Paper>
             ))}
           </Stack>
