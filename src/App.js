@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import MicButton from "./MicButton";
+import { Tooltip, Button } from "@mantine/core";
 
 function App() {
   const [listening, setListening] = useState(false);
   const [convo, setConvo] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
 
   let recognition;
 
@@ -63,20 +65,60 @@ function App() {
   };
 
   return (
-    <div style={styles.page}>
+    <div
+      style={{
+        ...styles.page,
+        backgroundColor: darkMode ? "#121212" : "#ffffff",
+        color: darkMode ? "#f1f1f1" : "#000000",
+      }}
+    >
+      {/* Toggle button in top-left corner */}
+      <Tooltip label={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"} position="bottom" withArrow>
+        <Button
+          onClick={() => setDarkMode(!darkMode)}
+          variant="light"
+          color={darkMode ? "yellow" : "blue"}
+          radius="md"
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+          }}
+        >
+          {darkMode ? "☀️" : "🌙"}
+        </Button>
+      </Tooltip>
+
       {/* Left half: mic controls */}
-      <div style={styles.leftPane}>
+      <div
+        style={{
+          ...styles.leftPane,
+          backgroundColor: darkMode ? "#1e1e1e" : "#f0f4ff",
+        }}
+      >
         <h1 style={styles.title}>🎤 Voice Assistant</h1>
         <MicButton listening={listening} toggleListening={toggleListening} />
-        <p style={{ marginTop: "20px" }}>
+        <p style={{ marginTop: "80px" }}>
           {listening ? "Listening..." : "Click the mic to speak"}
         </p>
       </div>
 
       {/* Right half: transcript */}
-      <div style={styles.rightPane}>
+      <div
+        style={{
+          ...styles.rightPane,
+          backgroundColor: darkMode ? "#181818" : "#fff",
+          borderLeft: darkMode ? "2px solid #333" : "2px solid #ccc",
+        }}
+      >
         <h2 style={styles.subtitle}>📝 Transcript</h2>
-        <div style={styles.log}>
+        <div
+          style={{
+            ...styles.log,
+            background: darkMode ? "#222" : "#fafafa",
+            border: darkMode ? "1px solid #444" : "1px solid #ddd",
+          }}
+        >
           {convo.map((msg, i) => (
             <p key={i}>
               <strong>{msg.speaker}:</strong> {msg.text}
@@ -96,7 +138,6 @@ const styles = {
   },
   leftPane: {
     flex: 1,
-    backgroundColor: "#f0f4ff",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -105,8 +146,6 @@ const styles = {
   rightPane: {
     flex: 1,
     padding: "20px",
-    backgroundColor: "#fff",
-    borderLeft: "2px solid #ccc",
     overflowY: "auto",
   },
   title: {
@@ -117,23 +156,11 @@ const styles = {
     fontSize: "1.5rem",
     marginBottom: "10px",
   },
-  button: {
-    fontSize: "1.2rem",
-    padding: "15px 30px",
-    borderRadius: "10px",
-    cursor: "pointer",
-    border: "none",
-    backgroundColor: "#4c6ef5",
-    color: "white",
-    boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-  },
   log: {
-    background: "#fafafa",
     padding: "10px",
     borderRadius: "8px",
     height: "80%",
     overflowY: "auto",
-    border: "1px solid #ddd",
   },
 };
 
