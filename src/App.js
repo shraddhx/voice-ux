@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import MicButton from "./MicButton";
-import { Tooltip, Button } from "@mantine/core";
+import { Tooltip, Button, Paper, Stack, Text } from "@mantine/core";
 
 function App() {
   const [listening, setListening] = useState(false);
   const [convo, setConvo] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [font, setFont] = useState('sm');
 
   let recognition;
 
@@ -46,15 +47,17 @@ function App() {
     } else if (text.toLowerCase().includes("name")) {
       reply = "My name is Voice Assistant.";
     } else if (text.toLowerCase().includes("switch") && text.toLowerCase().includes("theme")) {
-      reply = "I have switched the theme for you. Please let me know if there is anything else I can do";
+      reply = "I have switched the theme for you. Please let me know if there is anything else I can do.";
       setDarkMode(!darkMode);
     } else if (text.toLowerCase().includes("clear") && text.toLowerCase().includes("chat")) {
       setConvo([]);
       return;
     } else if (text.toLowerCase().includes("increase") && text.toLowerCase().includes("font")) {
-      // increase the font
+      increaseFont()
+      reply = font === 'lg' ? "Max font achieved" : "I have increased the font. Please let me know if there is anything else I can do."
     } else if (text.toLowerCase().includes("decrease") && text.toLowerCase().includes("font")) {
-      // decrease the font
+      decreaseFont()
+      reply = font === 'sm' ? "Minimum font achieved" : "I have decreased the font. Please let me know if there is anything else I can do."
     }
 
     setTimeout(() => {
@@ -63,6 +66,22 @@ function App() {
       speak(reply);
     }, 1000);
   };
+
+  const increaseFont = () => {
+    if (font === 'sm') {
+      setFont('md');
+    } else if (font === 'md') {
+      setFont('lg');
+    }
+  }
+
+  const decreaseFont = () => {
+    if (font === 'md') {
+      setFont('sm');
+    } else if (font === 'lg') {
+      setFont('md');
+    }
+  }
 
   const speak = (message) => {
     const synth = window.speechSynthesis;
@@ -107,7 +126,7 @@ function App() {
 
       <Tooltip label={"Decrease Font"} position="bottom" withArrow>
         <Button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => decreaseFont()}
           variant="light"
           color={darkMode ? "yellow" : "blue"}
           radius="md"
@@ -123,7 +142,7 @@ function App() {
 
       <Tooltip label={"Increase Font"} position="bottom" withArrow>
         <Button
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() => increaseFont()}
           variant="light"
           color={darkMode ? "yellow" : "blue"}
           radius="md"
@@ -146,9 +165,6 @@ function App() {
       >
         <h1 style={styles.title}>🎤 Voice Assistant</h1>
         <MicButton listening={listening} toggleListening={toggleListening} />
-        <p style={{ marginTop: "80px" }}>
-          {listening ? "Listening..." : "Click the mic to speak"}
-        </p>
       </div>
 
       {/* Right half: transcript */}
@@ -167,11 +183,35 @@ function App() {
             border: darkMode ? "1px solid #444" : "1px solid #ddd",
           }}
         >
-          {convo.map((msg, i) => (
-            <p key={i}>
-              <strong>{msg.speaker}:</strong> {msg.text}
-            </p>
-          ))}
+          <Stack spacing="sm" style={{ ...styles.log }}>
+            {convo.map((msg, i) => (
+              <Paper
+                key={i}
+                shadow="xs"
+                p="sm"
+                style={{
+                  maxWidth: "70%",
+                  alignSelf: msg.speaker === "User" ? "flex-end" : "flex-start",
+                  backgroundColor:
+                    msg.speaker === "User"
+                      ? darkMode
+                        ? "#1a8714"
+                        : "#d1ffd6"
+                      : darkMode
+                      ? "#2c2c2c"
+                      : "#f1f1f1",
+                  color: darkMode ? "#f1f1f1" : "#000",
+                  borderRadius: "18px",
+                  borderTopRightRadius: msg.speaker === "User" ? "0px" : "18px",
+                  borderTopLeftRadius: msg.speaker === "User" ? "18px" : "0px",
+                  wordWrap: "break-word",
+                  marginBottom: "8px",
+                }}
+              >
+                <Text size={font}>{msg.text}</Text>
+              </Paper>
+            ))}
+          </Stack>
         </div>
       </div>
     </div>
@@ -202,12 +242,12 @@ const styles = {
   },
   subtitle: {
     fontSize: "1.5rem",
-    marginBottom: "10px",
+    marginBottom: "20px",
   },
   log: {
     padding: "10px",
     borderRadius: "8px",
-    height: "80%",
+    height: "90%",
     overflowY: "auto",
   },
 };
